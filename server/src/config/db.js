@@ -33,7 +33,7 @@ export const connectDB = async () => {
         console.log("MySQL database connected successfully");
 
         // Create tables
-        await sequelize.sync({ alter: false });
+        await sequelize.sync({ alter: true });
 
         console.log("Database synchronized successfully");
     } catch (error) {

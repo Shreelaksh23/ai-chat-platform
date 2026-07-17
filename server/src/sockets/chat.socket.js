@@ -1,24 +1,40 @@
+import MessageService from "../services/MessageService.js";
+
 const registerChatSocket = (io, socket) => {
     console.log(`💬 Chat Socket Initialized for ${socket.user.email}`);
 
-    socket.on("join-chat", (chatId) => {
+    socket.on("join-chat", ({ chatId }) => {
         const room = `chat_${chatId}`;
 
         socket.join(room);
 
         console.log(`${socket.user.email} joined ${room}`);
-
-        // Check who is in the room
-        console.log(room);
-        console.log(io.sockets.adapter.rooms.get(room));
     });
 
-    socket.on("leave-chat", (chatId) => {
-        const room = `chat_${chatId}`;
+    socket.on("leave-chat", ({ chatId }) => {
+        socket.leave(`chat_${chatId}`);
+    });
 
-        socket.leave(room);
+    socket.on("send-message", async (payload) => {
+        try {
+            const message = await MessageService.createMessage(
+                socket.user.id,
+                {
+                    chatId: payload.chatId,
+                    role: "user",
+                    content: payload.content,
+                }
+            );
 
-        console.log(`${socket.user.email} left ${room}`);
+            io.to(`chat_${payload.chatId}`).emit(
+                "receive-message",
+                message
+            );
+        } catch (error) {
+            socket.emit("message-error", {
+                message: error.message,
+            });
+        }
     });
 };
 

@@ -9,6 +9,10 @@ const Message = sequelize.define(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
+    chatId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
 
     role: {
       type: DataTypes.ENUM("user", "assistant", "system"),
