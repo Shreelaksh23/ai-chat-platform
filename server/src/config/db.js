@@ -17,7 +17,6 @@ export const sequelize = new Sequelize(
             timestamps: true,
             underscored: false,
         },
-
         pool: {
             max: 10,
             min: 0,
@@ -31,9 +30,14 @@ export const sequelize = new Sequelize(
 export const connectDB = async () => {
     try {
         await sequelize.authenticate();
-        console.log("MySql databse connected successfullu")
+        console.log("MySQL database connected successfully");
+
+        // Create tables
+        await sequelize.sync({ alter: false });
+
+        console.log("Database synchronized successfully");
     } catch (error) {
-        console.error("MySql databse connection failed");
+        console.error("MySQL database connection failed");
         console.error(error.message);
         process.exit(1);
     }
