@@ -1,4 +1,4 @@
-import { verifyAccessToken} from "../helper/jwt.js"
+import { verifyAccessToken } from "../helper/jwt.js"
 import ApiError from "../utils/ApiError.js";
 
 const authMiddleware = (req, res, next) => {
@@ -17,7 +17,10 @@ const authMiddleware = (req, res, next) => {
 
         next();
     } catch (error) {
-        next(new ApiError(401, "Invalid or expired token"));
+        console.log("JWT Error:", error.message);
+        console.log(error);
+
+        next(new ApiError(401, error.message));
     }
 };
 

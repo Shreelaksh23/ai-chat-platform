@@ -1,31 +1,27 @@
+import { Routes, Route, Navigate } from "react-router-dom";
 import { useEffect } from "react";
-import { socket } from "./socket/socket";
+
+import ChatPage from "./pages/ChatPage";
 
 function App() {
     useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (!token) return;
-
-    socket.auth = { token };
-
-    const handleConnect = () => {
-        console.log("✅ Connected:", socket.id);
-
-        socket.emit("join-chat", "123");
-    };
-
-    socket.on("connect", handleConnect);
-
-    socket.connect();
-
-    return () => {
-        socket.emit("leave-chat", "123");
-        socket.off("connect", handleConnect);
-        socket.disconnect();
-    };
+    localStorage.setItem("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImM3MWNhMjJmLTMwOWUtNGRmNS1hYTU3LWEyZjQwYWVlZDllOSIsImVtYWlsIjoic2hyZWVAZ21haWwuY29tIiwiaWF0IjoxNzg0NDUxMjQ2LCJleHAiOjE3ODQ0NTIxNDZ9.rYVg_dhygeBTizozBYLqThYcM-3w5U0IFYgBs-7TwG0");
 }, []);
-    return <h1>ChatGPT Clone</h1>;
+    return (
+        <Routes>
+
+            <Route
+                path="/"
+                element={<Navigate to="/chat" />}
+            />
+
+            <Route
+                path="/chat"
+                element={<ChatPage />}
+            />
+
+        </Routes>
+    );
 }
 
 export default App;

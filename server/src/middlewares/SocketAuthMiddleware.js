@@ -14,7 +14,10 @@ const socketAuthMiddleware = (socket, next) => {
 
         next();
     } catch (error) {
-        next(new Error("Invalid or expired token"));
+        console.log("JWT Error:", error.message);
+        console.log(error);
+
+        next(new ApiError(401, error.message));
     }
 };
 
