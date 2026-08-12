@@ -21,6 +21,7 @@ router.get(
     "/:chatId/messages",
     MessageController.getMessages
 );
+router.patch("/:chatId/read",authMiddleware,ChatController.resetUnread);
 
 
 export default router;

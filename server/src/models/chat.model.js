@@ -33,6 +33,10 @@ const Chat = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    unreadCount: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
   },
   {
     paranoid: true,

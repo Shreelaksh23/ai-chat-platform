@@ -68,6 +68,22 @@ const ChatController = {
             )
         );
     }),
+    resetUnread: asyncHandler(async (req, res) => {
+
+        const chat = await ChatService.resetUnread(
+            req.params.chatId,
+            req.user.id
+        );
+
+        return res.status(200).json(
+            new ApiResponse(
+                200,
+                "Unread count reset successfully",
+                chat
+            )
+        );
+
+    }),
 }
 
 export default ChatController;

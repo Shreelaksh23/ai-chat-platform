@@ -3,11 +3,16 @@ import { socket } from "../socket/socket";
 // ================= CONNECT =================
 
 export const connectSocket = (token) => {
+    console.log("connectSocket called");
+    console.log("Token:", token);
+
     if (!token) return;
 
     socket.auth = {
         token,
     };
+
+    console.log("Calling socket.connect()");
 
     if (!socket.connected) {
         socket.connect();
@@ -41,6 +46,7 @@ export const leaveChat = (chatId) => {
 // ================= SEND MESSAGE =================
 
 export const sendMessage = (chatId, content) => {
+    console.log(socket.connected);
     socket.emit("send-message", {
         chatId,
         content,
@@ -70,3 +76,57 @@ export const removeMessageError = () => {
 };
 
 export default socket;
+
+// ================= ONLINE USERS =================
+
+export const onOnlineUsers = (callback) => {
+    socket.on("online-users", callback);
+};
+
+export const removeOnlineUsers = () => {
+    socket.off("online-users");
+};
+
+// ================= TYPING =================
+
+export const typing = (chatId) => {
+
+    socket.emit("typing", {
+        chatId,
+    });
+
+};
+
+// ================= STOP TYPING =================
+
+export const stopTyping = (chatId) => {
+
+    socket.emit("stop-typing", {
+        chatId,
+    });
+
+};
+
+// ================= LISTENERS =================
+
+export const onTyping = (callback) => {
+
+    socket.on("typing", callback);
+
+};
+
+export const onStopTyping = (callback) => {
+
+    socket.on("stop-typing", callback);
+
+};
+
+// ================= REMOVE =================
+
+export const removeTypingListeners = () => {
+
+    socket.off("typing");
+
+    socket.off("stop-typing");
+
+};

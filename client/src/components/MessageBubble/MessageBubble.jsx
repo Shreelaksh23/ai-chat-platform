@@ -1,30 +1,44 @@
 import "./MessageBubble.css";
 
 const MessageBubble = ({ message }) => {
-
     const isUser = message.role === "user";
 
     return (
         <div
-            className={`message-container ${
-                isUser ? "user" : "assistant"
-            }`}
+            className={
+                isUser
+                    ? "message-row user"
+                    : "message-row assistant"
+            }
         >
             <div className="message-bubble">
-
-                <div className="message-content">
+                <p className="message-content">
                     {message.content}
-                </div>
+                </p>
 
-                <div className="message-time">
-                    {new Date(
-                        message.createdAt
-                    ).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                    })}
-                </div>
+                <div className="message-footer">
+                    <span className="message-time">
+                        {new Date(
+                            message.createdAt
+                        ).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                        })}
+                    </span>
 
+                    {isUser && (
+                        <span className="message-status">
+                            {message.status === "sending" &&
+                                "⏳ Sending"}
+
+                            {message.status === "sent" &&
+                                "✓ Sent"}
+
+                            {message.status === "failed" &&
+                                "❌ Failed"}
+                        </span>
+                    )}
+                </div>
             </div>
         </div>
     );

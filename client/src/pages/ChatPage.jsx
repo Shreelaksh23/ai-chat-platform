@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
+import {
+    connectSocket,
+    disconnectSocket,
+    onOnlineUsers,
+    removeOnlineUsers,
+} from "../services/socket.service";
 
 import Sidebar from "../components/Sidebar/Sidebar.jsx"
-
+import ChatWindow from "../components/ChatWindow/ChatWindow.jsx";
 import {
     getChats,
     createChat,
@@ -10,12 +16,34 @@ import {
 function App() {
 
     const [chats, setChats] = useState([]);
+    const [onlineUsers, setOnlineUsers] = useState([]);
 
     const [selectedChat, setSelectedChat] =
         useState(null);
 
     useEffect(() => {
         loadChats();
+    }, []);
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+            connectSocket(token);
+        }
+
+        return () => {
+            disconnectSocket();
+        };
+    }, []);
+
+    useEffect(() => {
+        onOnlineUsers((users) => {
+            setOnlineUsers(users);
+        });
+        return () => {
+            removeOnlineUsers();
+        };
+
     }, []);
 
     const loadChats = async () => {
@@ -58,51 +86,21 @@ function App() {
     };
 
     return (
-
-        <div
-            style={{
-                display: "flex",
-                height: "100vh",
-            }}
-        >
+        <div className="app-container">
 
             <Sidebar
-
                 chats={chats}
-
+                onlineUsers={onlineUsers}
                 selectedChat={selectedChat}
-
                 onSelectChat={setSelectedChat}
-
                 onCreateChat={handleCreateChat}
-
             />
 
-            <div
-                style={{
-                    flex: 1,
-                    padding: "20px",
-                }}
-            >
-
-                <h2>Chat Window</h2>
-
-                {selectedChat ? (
-
-                    <h3>
-                        {selectedChat.title}
-                    </h3>
-
-                ) : (
-
-                    <p>Select a chat</p>
-
-                )}
-
-            </div>
+            <ChatWindow
+                selectedChat={selectedChat}
+            />
 
         </div>
-
     );
 
 }

@@ -6,7 +6,6 @@ import {
 } from "../../services/socket.service";
 import {
     getMessages,
-    resetUnread
 } from "../../services/chat.service";
 
 import {
@@ -25,6 +24,7 @@ const ChatWindow = ({ selectedChat }) => {
     const [typingUser, setTypingUser] = useState(null);
     const bottomRef = useRef(null);
     const handleSendMessage = (content) => {
+
         sendMessage(
             selectedChat.id,
             content
@@ -80,16 +80,22 @@ const ChatWindow = ({ selectedChat }) => {
     }, [messages]);
 
     const loadMessages = async () => {
+
         try {
-            const response = await getMessages(selectedChat.id);
 
-            console.log(response);
+            const messages =
+                await getMessages(
+                    selectedChat.id
+                );
 
-            setMessages(response.data);
+            setMessages(messages);
 
         } catch (error) {
+
             console.log(error);
+
         }
+
     };
 
     if (!selectedChat) {

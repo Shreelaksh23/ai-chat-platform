@@ -1,72 +1,20 @@
-import { useEffect, useState } from "react";
-import { getChats, createChat } from "../../services/chat.service";
+import { io } from "socket.io-client";
 
-const Sidebar = ({ selectedChat, onSelectChat }) => {
-    const [chats, setChats] = useState([]);
-    const [loading, setLoading] = useState(false);
+const URL = "http://localhost:3000";
 
-    useEffect(() => {
-        fetchChats();
-    }, []);
+export const socket = io(URL, {
+    autoConnect: false,
+    transports: ["websocket"],
+});
 
-    const fetchChats = async () => {
-        try {
-            setLoading(true);
+socket.on("connect", () => {
+    console.log("✅ Connected", socket.id);
+});
 
-            const response = await getChats();
+socket.on("disconnect", (reason) => {
+    console.log("❌ Disconnected:", reason);
+});
 
-            setChats(response.data || []);
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleCreateChat = async () => {
-        try {
-            const response = await createChat({
-                title: "New Chat",
-            });
-
-            setChats((prev) => [response.data, ...prev]);
-
-            onSelectChat(response.data);
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    return (
-        <div className="sidebar">
-
-            <button onClick={handleCreateChat}>
-                + New Chat
-            </button>
-
-            <hr />
-
-            {loading && <p>Loading...</p>}
-
-            {!loading &&
-                chats.map((chat) => (
-                    <div
-                        key={chat.id}
-                        onClick={() => onSelectChat(chat)}
-                        style={{
-                            padding: "12px",
-                            cursor: "pointer",
-                            background:
-                                selectedChat?.id === chat.id
-                                    ? "#ddd"
-                                    : "transparent",
-                        }}
-                    >
-                        {chat.title}
-                    </div>
-                ))}
-        </div>
-    );
-};
-
-export default Sidebar;
+socket.on("connect_error", (err) => {
+    console.log("❌ Connect Error:", err.message);
+});

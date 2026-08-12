@@ -15,15 +15,23 @@ const ChatService = {
     },
     //get all chats
     async getChats(userId) {
-        const chats = await Chat.findAll({
+        const chats = await Models.Chat.findAll({
             where: {
                 userId,
-                isArchived: false,
             },
-            order: [
-                ["isPinned", "DESC"],
-                ["updatedAt", "DESC"],
-            ]
+            include: [
+                {
+                    model: Models.Message,
+                    as: "messages",
+                    attributes: [
+                        "content",
+                        "createdAt",
+                    ],
+                    limit: 1,
+                    order: [["createdAt", "DESC"]],
+                },
+            ],
+            order: [["updatedAt", "DESC"]],
         });
         return chats;
     },
@@ -56,6 +64,21 @@ const ChatService = {
         chat.isArchived = true;
         await chat.save();
         return;
+    },
+    async resetUnread(chatId, userId) {
+        const chat = await Chat.findOne({
+            where: {
+                id: chatId,
+                userId,
+            },
+        });
+        if (!chat) {
+            throw new ApiError(404, "Chat not found");
+        }
+        await chat.update({
+            unreadCount: 0,
+        });
+        return chat;
     }
 }
 

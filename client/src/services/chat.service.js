@@ -80,3 +80,11 @@ export const deleteChat = async (chatId) => {
         throw error.response?.data || error;
     }
 };
+//========
+export const resetUnread = async (chatId) => {
+
+    return accounts.patch(
+        `/chats/${chatId}/read`
+    );
+
+};

@@ -13,10 +13,8 @@ const MessageInput = ({
     const [message, setMessage] = useState("");
 
     const handleSend = () => {
-        const value = message.trim();
 
-        console.log("Send clicked");
-        console.log("Message:", value);
+        const value = message.trim();
 
         if (!value) return;
 

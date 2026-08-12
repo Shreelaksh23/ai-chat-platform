@@ -1,4 +1,5 @@
 import { verifyAccessToken } from "../helper/jwt.js";
+import ApiError from "../utils/ApiError.js";
 
 const socketAuthMiddleware = (socket, next) => {
     try {
