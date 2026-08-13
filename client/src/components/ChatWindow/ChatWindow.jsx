@@ -17,12 +17,19 @@ import {
     onTyping,
     onStopTyping,
     removeTypingListeners,
+    onAIThinking,
+    removeAIThinking,
+    onAIError,
+    removeAIError,
 } from "../../services/socket.service";
 
 const ChatWindow = ({ selectedChat }) => {
 
     const [messages, setMessages] = useState([]);
     const [typingUser, setTypingUser] = useState(null);
+    const [aiThinking, setAiThinking] = useState(false);
+    const [aiError, setAiError] = useState(null);
+
     const bottomRef = useRef(null);
     const handleSendMessage = (content) => {
         sendMessage(
@@ -48,6 +55,25 @@ const ChatWindow = ({ selectedChat }) => {
             ]);
 
         });
+        onAIThinking((data) => {
+            if (data.chatId !== selectedChat.id) {
+                return;
+            }
+            setAiThinking(data.thinking);
+        });
+        onAIError((data) => {
+
+            console.error("AI Error:", data);
+
+            setAiThinking(false);
+
+            setAiError(
+                data?.message ||
+                "Unable to generate AI response. Please try again."
+            );
+
+        });
+
         onTyping((user) => {
 
             setTypingUser(user.username);
@@ -66,7 +92,8 @@ const ChatWindow = ({ selectedChat }) => {
 
             removeReceiveMessage();
             removeTypingListeners();
-
+            removeAIThinking();
+            removeAIError();
         };
 
     }, [selectedChat]);
@@ -103,15 +130,10 @@ const ChatWindow = ({ selectedChat }) => {
                     placeItems: "center",
                 }}
             >
-
                 Select Chat
-
             </div>
-
         );
-
     }
-
     return (
 
         <div
@@ -149,6 +171,40 @@ const ChatWindow = ({ selectedChat }) => {
                         message={message}
                     />
                 ))}
+                {aiThinking && (
+                    <div
+                        style={{
+                            padding: "10px 20px",
+                            color: "#666",
+                            fontStyle: "italic",
+                        }}
+                    >
+                        AI is thinking...
+                    </div>
+                )}
+                {aiError && (
+                    <div
+                        style={{
+                            margin: "10px 20px",
+                            padding: "10px 15px",
+                            borderRadius: "8px",
+                            background: "#ffe5e5",
+                            color: "#c00",
+                        }}
+                    >
+                        {aiError}
+
+                        <button
+                            onClick={() => setAiError(null)}
+                            style={{
+                                marginLeft: "10px",
+                                cursor: "pointer",
+                            }}
+                        >
+                            ×
+                        </button>
+                    </div>
+                )}
 
                 {typingUser && (
                     <div

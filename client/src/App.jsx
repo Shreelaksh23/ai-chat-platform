@@ -4,7 +4,7 @@ import ChatPage from "./pages/ChatPage";
 import "./App.css";
 function App() {
     useEffect(() => {
-        localStorage.setItem("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImM3MWNhMjJmLTMwOWUtNGRmNS1hYTU3LWEyZjQwYWVlZDllOSIsImVtYWlsIjoic2hyZWVAZ21haWwuY29tIiwiaWF0IjoxNzg2NTQyMjc4LCJleHAiOjE3ODY1NDMxNzh9.rdyoI1HSkhsjKPwsL2gpsyF3g-T4U6yzarkW8G-UXlI");
+        localStorage.setItem("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImM3MWNhMjJmLTMwOWUtNGRmNS1hYTU3LWEyZjQwYWVlZDllOSIsImVtYWlsIjoic2hyZWVAZ21haWwuY29tIiwiaWF0IjoxNzg2NTg3NjYwLCJleHAiOjE3ODY1ODg1NjB9.t7BQ8A8g55vY0r_-osw-oRCC_VWJ95L-JUmjQRgYQ1E");
     }, []);
     return (
         <Routes>

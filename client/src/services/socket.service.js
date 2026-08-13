@@ -121,6 +121,26 @@ export const onStopTyping = (callback) => {
 
 };
 
+// ================= AI THINKING =================
+
+export const onAIThinking = (callback) => {
+    socket.on("ai-thinking", callback);
+};
+
+export const removeAIThinking = () => {
+    socket.off("ai-thinking");
+};
+
+// ================= AI ERROR =================
+
+export const onAIError = (callback) => {
+    socket.on("message-error", callback);
+};
+
+export const removeAIError = () => {
+    socket.off("message-error");
+};
+
 // ================= REMOVE =================
 
 export const removeTypingListeners = () => {

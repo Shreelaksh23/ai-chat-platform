@@ -4,6 +4,7 @@ import ApiError from "../utils/ApiError.js";
 const { Message, Chat } = Models;
 
 const MessageService = {
+
     // ================= CREATE MESSAGE =================
     async createMessage(userId, data) {
 
@@ -26,10 +27,14 @@ const MessageService = {
             content,
             status: "sending",
         });
-        // Auto rename chat using first user message
-        if (role === "user") {
 
-            if (chat.title === "New Chat") {
+        try {
+
+            // Auto rename chat
+            if (
+                role === "user" &&
+                chat.title === "New Chat"
+            ) {
 
                 await chat.update({
                     title:
@@ -37,17 +42,31 @@ const MessageService = {
                             ? content.substring(0, 30) + "..."
                             : content,
                 });
+
             }
+
+            await chat.increment("unreadCount");
+
+            await chat.update({
+                updatedAt: new Date(),
+            });
+
+            await message.update({
+                status: "sent",
+            });
+
+            return await message.reload();
+
+        } catch (error) {
+
+            await message.update({
+                status: "failed",
+            });
+
+            throw error;
         }
-        await chat.increment("unreadCount");
-
-        // Update updatedAt so chats move to the top
-        await chat.update({
-            updatedAt: new Date(),
-        });
-
-        return await message.reload();
     },
+
 
     // ================= GET CHAT HISTORY =================
     async getMessages(chatId, userId) {
@@ -72,6 +91,26 @@ const MessageService = {
 
         return messages;
     },
+
+
+    // ================= GET MESSAGES FOR AI =================
+    async getMessagesForAI(chatId) {
+
+        const messages = await Message.findAll({
+            where: {
+                chatId,
+            },
+            attributes: [
+                "role",
+                "content",
+                "createdAt",
+            ],
+            order: [["createdAt", "ASC"]],
+        });
+
+        return messages;
+    },
+
 };
 
 export default MessageService;
